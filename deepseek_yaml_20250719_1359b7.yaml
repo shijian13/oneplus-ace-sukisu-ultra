@@ -1,0 +1,32 @@
+name: Trigger Kernel Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  trigger-kernel-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger GKI Build
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'gki-kernel.yml',
+              ref: 'main',
+              inputs: {
+                make_release: true,
+                android_version: 'android14',
+                kernel_version: '6.6',
+                sub_level: '1',
+                os_patch_level: '2024-08',
+                kernelsu_variant: 'SukiSU',
+                kernelsu_branch: 'Dev(开发)',
+                use_zram: true,
+                use_kpm: true
+              }
+            })
